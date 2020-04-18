@@ -16,10 +16,11 @@
       - python3.x86_64
       - python3-pip.noarch
 
-- name: Install openstacksdk library
+- name: Install openstacksdk library and dependencies
   pip:
     name:
       - openstacksdk
+      - selinux
     state: latest
     extra_args: -U
     executable: pip3
