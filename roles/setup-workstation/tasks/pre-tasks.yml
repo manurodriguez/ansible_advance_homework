@@ -1,14 +1,29 @@
 - name: yum clean
   shell: yum clean all
-- name: install pip
+
+- name: enable tower repo for python3
+  yum_repository:
+    name: "{{ item.name }}"
+    description: "{{ item.description }}" 
+    baseurl: "{{ item.baseurl }}"
+    gpgcheck: no
+    enabled: yes
+  loop: "{{ tower_repo }}"
+
+- name: install python3 and python3-pip
   yum:
     name:
-      - python-pip
+      - python3.x86_64
+      - python3-pip.noarch
+
 - name: Install openstacksdk library
   pip:
-    name: openstacksdk
+    name:
+      - openstacksdk
     state: latest
     extra_args: -U
+    executable: pip3
+
 - name: Create clouds.yaml file
   blockinfile:
     create: yes
@@ -21,8 +36,9 @@
             password: r3dh4t1!
             project_name: admin
             username: admin
-          identity_api_version: '3.0'
+          identity_api_version: '3'
           region_name: RegionOne
+
 - name: Set openstack.pub authorized key from file
   authorized_key:
     user: cloud-user
