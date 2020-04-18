@@ -46,10 +46,10 @@
     state: present
     kind: ssh
     tower_host: tower1.{{tower_GUID}}.example.opentlc.com
-    tower_username: admin
-    tower_password: r3dh4t1!
+    tower_username: "{{ user_name }}"
+    tower_password: "{{ password }}"
     tower_verify_ssl: no
-    ssh_key_data: /root/.ssh/mykey.pem
+    ssh_key_data: "{{ lookup('file', path_to_opentlc_key) }}"
     username: "{{ opentlc_login }}"
 
 - name: Remove secret
