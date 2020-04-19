@@ -10,6 +10,8 @@
 
 - name: setup load-balancer tier
   hosts: frontends
+  vars_files:
+    - roles/base-config/vars/vault.yml
   become: yes
   roles:
     - {name: base-config, tags: base-config}
