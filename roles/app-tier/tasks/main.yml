@@ -1,2 +1,24 @@
 ---
 # tasks file for app-tier
+- name: install {{ app_name }}
+  yum:
+    name: "{{ app_package }}"
+    state: latest
+
+- name: enable {{ app_name }} at boot
+  service:
+    name: "{{ app_name }}"
+    state: started
+    enabled: yes
+
+- name: create ansible {{ app_name }} directory
+  file:
+    path: /usr/share/{{ app_name }}/webapps/ROOT
+    state: directory
+
+- name: copy static index.html to {{ app_name }} webapps/ROOT/index.html
+  template:
+    src: index.html.j2
+    dest: /usr/share/{{ app_name }}/webapps/ROOT/index.html
+    mode: 0644
+  notify: restart {{ app_name }}

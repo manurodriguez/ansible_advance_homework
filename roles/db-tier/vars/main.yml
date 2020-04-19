@@ -1,2 +1,5 @@
 ---
 # vars file for db-tier
+appdb_name: postgresql
+appdb_package: postgresql-server
+

@@ -1,2 +1,10 @@
 ---
 # tasks file for base-config
+- name: enable opentcl repos
+  yum_repository:
+    name: "{{ item.name }}"
+    description: "{{ item.description }}" 
+    baseurl: "{{ item.baseurl }}"
+    gpgcheck: no
+    enabled: yes
+  loop: "{{ repositories }}"

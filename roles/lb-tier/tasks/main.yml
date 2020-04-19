@@ -1,2 +1,19 @@
 ---
 # tasks file for lb-tier
+- name: install frontend packages
+  yum:
+    name: "{{ item }}"
+    state: latest
+  loop: "{{ frontend_packages }}"
+
+- name: enable and start {{ frontend_service }}
+  service:
+    name: "{{ frontend_service }}"
+    state: started
+    enabled: yes
+
+- name: configure {{ frontend_service }}
+  template:
+    src: haproxy.cfg.j2
+    dest: /etc/haproxy/haproxy.cfg
+  notify: restart {{ frontend_service }}
