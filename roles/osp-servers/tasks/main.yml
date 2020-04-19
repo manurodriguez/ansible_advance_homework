@@ -16,8 +16,8 @@
     userdata: |
       #cloud-config
       ssh_authorized_keys:
-          - "{{ lookup('file', openstack_pubkey) }}"
-          - "{{ lookup('file', opentlc_pubkey) }}"
+          - "{{ openstack_pubkey }}"
+          - "{{ opentlc_pubkey }}"
   loop: "{{ osp_servers|dict2items }}"
   loop_control:
     label: "{{ item.value.name }}"
