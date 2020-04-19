@@ -1,2 +1,17 @@
 ---
 # tasks file for db-tier
+  - name: install {{ appdb_name }}
+    yum:
+      name: "{{ appdb_package }}"
+      state: latest
+
+  - name: initialize {{ appdb_name }}
+    command: postgresql-setup initdb
+    args:
+      creates: /var/lib/pgsql/data
+
+  - name: start and enable {{ appdb_name }} at boot
+    service:
+      name: "{{ appdb_name }}"
+      enabled: yes
+      state: started

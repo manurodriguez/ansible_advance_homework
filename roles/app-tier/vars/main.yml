@@ -1,2 +1,4 @@
 ---
 # vars file for app-tier
+app_name: tomcat
+app_package: tomcat
