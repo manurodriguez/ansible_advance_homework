@@ -8,6 +8,10 @@
     tower_username: "{{ user_name }}"
     tower_password: "{{ password }}"
     tower_verify_ssl: no
+    scm_type: "{{ scm_type }}"
+    scm_branch: "{{ scm_branch }}"
+    scm_url: "{{ scm_url }}"
+    scm_update_on_launch: yes
 
 - name: Machine Credentail to connect to workstation using openstack.pub
   tower_credential:
