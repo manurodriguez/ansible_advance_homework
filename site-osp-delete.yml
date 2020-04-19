@@ -1,4 +1,8 @@
 - hosts: workstation
+  gather_facts: false
   become: yes
   roles:
     - osp-instance-delete
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+
