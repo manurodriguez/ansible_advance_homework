@@ -1,2 +1,7 @@
 ---
 # defaults file for osp.servers
+cloud: ospcloud
+int_network: int_network
+ext_network: ext_network
+openstack_pubkey: "/root/.ssh/openstack.pub"
+opentlc_pubkey: "/root/.ssh/mykey.pub"

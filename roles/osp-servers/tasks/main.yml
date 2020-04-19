@@ -2,9 +2,53 @@
 
 # tasks file for osp.servers
 - name: Create new server instances and attaches them a network and passes metadata to the instance
-
+  os_server:
+    state: present
+    cloud: "{{ cloud }}"
+    name: "{{ item.value.name }}"
+    image: "{{ item.value.image }}"
+    key_name: "{{ item.value.key_name }}"
+    flavor: "{{ item.value.flavor }}"
+    meta: "{{ item.value.meta }}"
+    security_groups: "{{ item.value.security_group }}"
+    nics:
+     - net-name: "{{ int_network }}"
+    userdata: |
+      #cloud-config
+      ssh_authorized_keys:
+          - "{{ lookup('file', openstack_pubkey) }}"
+          - "{{ lookup('file', opentlc_pubkey) }}"
+  loop: "{{ osp_servers|dict2items }}"
+  loop_control:
+    label: "{{ item.value.name }}"
 
 - name: Add floating IP to Servers
-   
+  os_floating_ip:
+     cloud: "{{ cloud }}"
+     state: present
+     reuse: yes
+     server: "{{ item.value.name }}"
+     network: "{{ ext_network }}"
+     wait: true
+     timeout: 180
+  register: r_os_floating_ip   
+  loop: "{{ osp_servers|dict2items }}"
+  loop_control:
+    label: "{{ item.value.name }}"
 
-- name: Wait for server to be available
+- name: Store floating IP addresses
+  set_fact:
+    floating_ips: "{{ r_os_floating_ip.results | json_query(instancequery) }}"
+  vars:
+    instancequery: "[*].{floating: floating_ip.floating_ip_address, name: item.key}"
+
+- name: Wait for servers to be available
+  wait_for:
+    host: "{{ item.floating }}"
+    port: 22
+    search_regex: OpenSSH
+    timeout: 600
+  loop: "{{ floating_ips }}"
+  loop_control:
+    label: "{{ item.name }}"
+
