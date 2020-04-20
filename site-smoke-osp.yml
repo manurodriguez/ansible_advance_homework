@@ -22,7 +22,14 @@
     tags:
       - osp.smoke
 
-  - name: Curl Frontent website
+  - name: Wait for tomcat servers to be available
+    wait_for:
+      host: "{{ frontendIP }}"
+      port: 80
+      sleep: 10
+      timeout: 600
+
+  - name: Curl Frontend website
     uri:
       url: "http://{{ item }}"
       return_content: yes
