@@ -1,14 +1,36 @@
 - hosts: workstation
   gather_facts: false
   tasks:
-  - name: OpenStack servers
-    os_server_facts:
-     cloud: ospcloud
-     server: 'frontend'
-    register: openstack_info
+
+  - name: Fetch frontent server information
+    os_server_info:
+      cloud: ospcloud
+      server: frontend
+      filters:
+        vm_state: active
+    register: result
+    vars:
+      ansible_python_interpreter: /usr/bin/python3
     tags:
       - osp.smoke
-  - name: Curl website
+
+  - name: Save Frontend IP
+    set_fact:
+      frontendIP: "{{ result.openstack_servers | json_query(instancequery) }}"
+    vars:
+      instancequery: "[0].accessIPv4"
+    tags:
+      - osp.smoke
+
+  - name: Curl Frontent website
+    uri:
+      url: "http://{{ item }}"
+      return_content: yes
+    register: webpage
+    loop:
+      - "{{ frontendIP }}"
+    tags:
+      - osp.smoke
 
   - name: Fail if 'Ansible has done its job' is not in the page content
     fail:
