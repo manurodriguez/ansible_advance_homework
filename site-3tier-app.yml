@@ -21,6 +21,8 @@
 
 - name: setup app tier
   hosts: apps
+  vars_files:
+    - roles/base-config/vars/vault.yml
   become: yes
   gather_facts: false
   roles:
@@ -32,6 +34,8 @@
 - name: setup database tier
   become: yes
   hosts: appdbs
+  vars_files:
+    - roles/base-config/vars/vault.yml
   roles:
     - {name: base-config, tags: base-config}
     - {name: db-tier, tags: [dbs, postgres]}
