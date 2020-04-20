@@ -6,7 +6,7 @@ repositories:
     baseurl: "{{ vault_rhel_7_server_rpms_baseurl }}"
   - name: "rhel-7-server-rh-common-rpms"
     description: "Red Hat Enterprise Linux 7 Common"
-    baseurl: "{{ vault_rhel-7_server_rh_common_rpms_baseurl }}"
+    baseurl: "{{ vault_rhel_7_server_rh_common_rpms_baseurl }}"
   - name: "rhel-7-server-extras-rpms"
     description: "Red Hat Enterprise Linux 7 Extras"
     baseurl: "{{ vault_rhel_7_server_extras_rpms_baseurl }}"
