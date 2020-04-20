@@ -8,3 +8,5 @@
     gpgcheck: no
     enabled: yes
   loop: "{{ repositories }}"
+  loop_control:
+    label: "{{ item.name }}"
