@@ -34,9 +34,16 @@
 | roles/config-tower/tasks/post-config-tower.yml | any post config jobs
 |===
 
-Note: Upload your opentlc ssh private key to /root/.ssh/mykey.pem on the bastion node
+* Upload your opentlc ssh private key to /root/.ssh/mykey.pem on the bastion node and set it 400 permissions
+[source,text]
+----
+[bastion]$ sudo -i
+[bastion]# vi /root/.ssh/mykey.pem
+[bastion]# chmod 400 /root/.ssh/mykey.pem
+----
 
-* From the cloned repo run `site-setup-workstation.yml` playbook to setup workstation as an isolated node
+
+* From the cloned repo run `site-setup-workstation.yml` playbook to setup workstation as an isolated node, provide vault pass for repo_vars.yml
 
 [source,text]
 ----
@@ -73,7 +80,7 @@ Note: Upload your opentlc ssh private key to /root/.ssh/mykey.pem on the bastion
 * From your web browser, connect to tower console using the admin username and known password
 * Navigate to Templates menu from the side panel and select the launch button of the `cicd_workflow` template.
 
-* Finally grade your work
+* Wait for the `cicd_workflow` to finish and finally grade your work
 [source,text]
 ----
 [bastion]# OSP_GUID=<Openstack GUID>

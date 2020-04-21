@@ -31,7 +31,7 @@ repositories:
 Dependencies
 ------------
 
-This role does not have dependencies
+You might need to use in combination with a role to generate the openstack inventory as role `osp-facts`
 
 Example Playbook
 ----------------

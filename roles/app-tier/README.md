@@ -23,6 +23,7 @@ Dependencies
 ------------
 
 base-config role is required to run first to setup repositories and access to packages
+You might need to use in combination with a role to generate the openstack inventory as role `osp-facts`
 
 Example Playbook
 ----------------
