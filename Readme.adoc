@@ -1,24 +1,6 @@
 ==== Ansible Tower Config
 
 
-* From the cloned repo run `site-config-tower.yml` playbook to create job templates and workflow template.
-
-[source,text]
-----
-[bastion]$ sudo -i
-[bastion]# cd ansible_advance_homework
-[bastion]# TOWER_GUID=<Ansible Tower Homework GUID from mail>
-[bastion]# OSP_GUID=<Openstack for Ansible GUID from mail>
-[bastion]# OPENTLC_LOGIN=<username-company.com>
-[bastion]# OPENTLC_PASSWORD=<your openlc account password>
-[bastion]# GITHUB_REPO=https://github.com/<githubhandler>/ansible_advance_homework
-[bastion]# JQ_REPO_BASE=http://www.opentlc.com/download/ansible_bootcamp
-[bastion]# REGION=<enter region name example us-east-1>
-[bastion]# RH_MAIL_ID=<your mail id for dynamic inventory tag>
-[bastion]# ansible-playbook site-config-tower.yml -e tower_GUID=${TOWER_GUID} -e osp_GUID=${OSP_GUID} -e opentlc_login=${OPENTLC_LOGIN} -e path_to_opentlc_key=/root/.ssh/mykey.pem -e param_repo_base=${JQ_REPO_BASE} -e opentlc_password=${OPENTLC_PASSWORD} -e REGION_NAME=${REGION} -e EMAIL=${RH_MAIL_ID} -e github_repo=${GITHUB_REPO}
-----
-
-
 .List of Playbooks
 [%header,cols=2*]
 |===
@@ -51,3 +33,50 @@
 | roles/config-tower/tasks/workflow_template.yml | genrate workflow from `workflow.yml` file
 | roles/config-tower/tasks/post-config-tower.yml | any post config jobs
 |===
+
+Note: Upload your opentlc ssh private key to /root/.ssh/mykey.pem on the bastion node
+
+* From the cloned repo run `site-setup-workstation.yml` playbook to setup workstation as an isolated node
+
+[source,text]
+----
+[bastion]$ sudo -i
+[bastion]# git clone https://github.com/manurodriguez/ansible_advance_homework.git
+[bastion]# cd ansible_advance_homework
+[bastion]# OSP_GUID=<Openstack for Ansible GUID from mail>
+[bastion]# ansible-playbook site-setup-workstation.yml -e OSP_GUID=${OSP_GUID} -e @repo_vars.yml \
+--private-key=/root/.ssh/mykey.pem -u <username-company.com> --ask-vault-pass
+----
+
+
+* From the cloned repo run `site-config-tower.yml` playbook to create job templates and workflow template.
+
+[source,text]
+----
+[bastion]$ sudo -i
+[bastion]# cd ansible_advance_homework
+[bastion]# TOWER_GUID=<Ansible Tower Homework GUID from mail>
+[bastion]# OSP_GUID=<Openstack for Ansible GUID from mail>
+[bastion]# OPENTLC_LOGIN=<username-company.com>
+[bastion]# OPENTLC_PASSWORD=<your openlc account password>
+[bastion]# GITHUB_REPO=https://github.com/<githubhandler>/ansible_advance_homework
+[bastion]# JQ_REPO_BASE=http://www.opentlc.com/download/ansible_bootcamp
+[bastion]# REGION=<enter region name example us-east-1>
+[bastion]# RH_MAIL_ID=<your mail id for dynamic inventory tag>
+[bastion]# ansible-playbook site-config-tower.yml -e tower_GUID=${TOWER_GUID} \
+ -e osp_GUID=${OSP_GUID} -e opentlc_login=${OPENTLC_LOGIN} -e path_to_opentlc_key=/root/.ssh/mykey.pem \
+ -e param_repo_base=${JQ_REPO_BASE} -e opentlc_password=${OPENTLC_PASSWORD} -e REGION_NAME=${REGION} \ 
+ -e EMAIL=${RH_MAIL_ID} -e github_repo=${GITHUB_REPO}
+----
+
+
+* From your web browser, connect to tower console using the admin username and known password
+* Navigate to Templates menu from the side panel and select the launch button of the `cicd_workflow` template.
+
+* Finally grade your work
+[source,text]
+----
+[bastion]# OSP_GUID=<Openstack GUID>
+[bastion]# ANSIBLE_ADVANCED_GUID=<Prod Tier Three App GUID>
+[bastion]# ansible-playbook grading-script.yml -e OSP_GUID=${OSP_GUID} -e ANSIBLE_ADVANCE_GUID=${ANSIBLE_ADVANCED_GUID}
+----

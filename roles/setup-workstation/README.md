@@ -1,31 +1,63 @@
 Role Name
 =========
 
-A brief description of the role goes here.
+This role configures workstation server as an isolated node for tower to run playbooks
+it also creates osp networks, router, SG, flavor, and ssh keypair through the workstation node
 
 Requirements
 ------------
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+- Tested on Ansible 2.7 and above
+- python3, python-pip3, and openstacksdk latest for openstack tasks to run. These are installed by this role.
 
 Role Variables
 --------------
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+See roles/setup-workstation/vars/main.yml for full details of the openstack cloud variables
+
+This playbook uses vault repo_vars.yml which contains repository variables. This repo
+provides python3 packages easy to install via yum. It is on a vault to protect URL.
+
+```
+tower_repo:
+  - name: "rhel-7-server-rpms-tower"
+    description: "Red Hat Enterprise Linux 7 Tower"
+    baseurl: http://mirror-to-download-python-packages.com/repos/rhel-7-server-rpms"
+```
 
 Dependencies
 ------------
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+This role has no dependecines, but it triggers playbook site-install-isolated-node.yml
 
 Example Playbook
 ----------------
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
+File: site-setup-workstation.yml
+```
+- hosts: localhost
+  tasks:
+  - name: Create workstation inventory
+    add_host:
+       name: "workstation-{{OSP_GUID}}.rhpds.opentlc.com"
+       group: workstation
 
-    - hosts: servers
-      roles:
-         - { role: username.rolename, x: 42 }
+
+- hosts: workstation
+  become: yes
+  roles:
+    - setup-workstation
+
+- import_playbook: site-install-isolated-node.yml 
+```
+
+Then run:
+```
+[bastion]$ sudo -i
+[bastion]# cd ansible_advance_homework
+[bastion]# OSP_GUID=<Openstack for Ansible GUID from mail>
+[bastion]# ansible-playbook site-setup-workstation.yml -e OSP_GUID=${OSP_GUID} -e @repo_vars.yml --private-key=/root/.ssh/mykey.pem -u <username-company.com> --ask-vault-pass
+```
 
 License
 -------
@@ -35,4 +67,4 @@ BSD
 Author Information
 ------------------
 
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+Manuel Rodriguez
