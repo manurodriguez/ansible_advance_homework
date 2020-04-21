@@ -2,7 +2,7 @@
   gather_facts: false
   tasks:
 
-  - name: Curl Frontent website
+  - name: Fetch Frontent Prod Webpage
     uri:
       url: "http://{{ inventory_hostname }}"
       return_content: yes
@@ -10,7 +10,7 @@
     tags:
       - osp.smoke
 
-  - name: Fail if 'Ansible has done its job' is not in the page content
+  - name: Fail if 'Ansible has done its job' is not in the Prod page content
     fail:
     when: "'Ansible has done its job' not in webpage.content"
     tags:

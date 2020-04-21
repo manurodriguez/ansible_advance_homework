@@ -1,7 +1,8 @@
-- name: yum clean
+---
+- name: Clean yum repositories
   shell: yum clean all
 
-- name: enable tower repo for python3
+- name: Enable tower repo for python3
   yum_repository:
     name: "{{ item.name }}"
     description: "{{ item.description }}" 
@@ -9,8 +10,10 @@
     gpgcheck: no
     enabled: yes
   loop: "{{ tower_repo }}"
+  loop_control:
+    label: "{{ item.name }}"
 
-- name: install python3 and python3-pip
+- name: Install python3 and python3-pip
   yum:
     name:
       - python3.x86_64

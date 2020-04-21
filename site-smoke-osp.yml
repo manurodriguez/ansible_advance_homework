@@ -2,7 +2,7 @@
   gather_facts: false
   tasks:
 
-  - name: Fetch frontent server information
+  - name: Fetch QA Frontent server information
     os_server_info:
       cloud: ospcloud
       server: frontend
@@ -14,7 +14,7 @@
     tags:
       - osp.smoke
 
-  - name: Save Frontend IP
+  - name: Save QA Frontend IP
     set_fact:
       frontendIP: "{{ result.openstack_servers | json_query(instancequery) }}"
     vars:
@@ -22,14 +22,14 @@
     tags:
       - osp.smoke
 
-  - name: Wait for tomcat servers to be available
+  - name: Wait for QA App servers to be available
     wait_for:
       host: "{{ frontendIP }}"
       port: 80
       sleep: 10
       timeout: 600
 
-  - name: Curl Frontend website
+  - name: Fetch QA Frontend Webpage
     uri:
       url: "http://{{ item }}"
       return_content: yes
@@ -39,7 +39,7 @@
     tags:
       - osp.smoke
 
-  - name: Fail if 'Ansible has done its job' is not in the page content
+  - name: Fail if 'Ansible has done its job' is not in the QA page content
     fail:
     when: "'Ansible has done its job' not in webpage.results[0].content"
     tags:
