@@ -8,11 +8,15 @@
     src: tower_info.yml
     dest: /tmp/tower_info.yml
 
+- name: Generate var file for aws check status
+  template:
+    src: aws_status.yml
+    dest: /tmp/aws_status.yml
+
 - name: Copy opentlc ssh keys
   copy:
     src: "{{path_to_opentlc_key}}"
     dest: /root/secret.pem
-
 
 - name: Copy inventory vars
   copy:
