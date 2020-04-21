@@ -1,17 +1,20 @@
 - hosts: localhost
   gather_facts: false
   tasks:
+
   - name: Create In-memory Inventory
     add_host: 
       name: workstation-{{OSP_GUID}}.rhpds.opentlc.com
       group: workstation
       ansible_ssh_private_key_file: ~/.ssh/openstack.pem
       ansible_ssh_user: cloud-user
+
  
 - hosts: workstation
   gather_facts: false
   tasks:
-  - name: OpenStack servers
+
+  - name: Collect QA Frontend server information
     os_server_info:
       cloud: ospcloud
       server: 'frontend'
@@ -21,38 +24,47 @@
     vars:
       ansible_python_interpreter: /usr/bin/python3
 
-  - name: Save Frontend IP
+  - name: Save QA Frontend IP
     set_fact:
       frontendIP: "{{ openstack_info.openstack_servers | json_query(instancequery) }}"
     vars:
       instancequery: "[0].accessIPv4"
 
-  - name: Curl Frontend website
+  - name: Fetch QA Webpage
     uri:
       url: "http://{{ item }}"
       return_content: yes
-    register: webpage
+    register: qawebpage
     loop:
       - "{{ frontendIP }}"
 
-  - debug: var=webpage.results[0].content
+  - name: Print QA Webpage content
+    debug: 
+      var: qawebpage.results[0].content
 
-  - name: Fail
+  - name: if 'Ansible has done its job' is not in the QA page content
     fail:
-    when: "'Ansible' not in webpage.results[0].content" 
+    when: "'Ansible has done its job' not in qawebpage.results[0].content" 
 
   
 - hosts: localhost
   gather_facts: false
   tasks:
-  - name: Curl website
-    command: curl "http://frontend1.{{ ANSIBLE_ADVANCE_GUID }}.example.opentlc.com"
-    register: webpage
 
-  - debug: var=webpage.stdout
+  - name: Fetch Prod Webpage
+    uri: 
+      url: "http://frontend1.{{ ANSIBLE_ADVANCE_GUID }}.example.opentlc.com"
+      return_content: yes
+    register: prodwebpage
 
-  - name: Fail
+  - name: Print Prod Webpage content
+    debug: 
+      var: prodwebpage.content
+
+  - name: if 'Ansible has done its job' is not in the Prod page content
     fail:
-    when: "'Ansible' not in webpage.stdout" 
+    when: "'Ansible has done its job' not in prodwebpage.content" 
+
   - name: Success
-    debug: msg="Congrats Yours HW Assignment is completed"
+    debug: 
+      msg: "Congrats Yours HW Assignment is completed"
