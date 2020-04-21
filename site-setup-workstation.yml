@@ -7,6 +7,14 @@
        name: "workstation-{{OSP_GUID}}.rhpds.opentlc.com"
        group: workstation
 
+  - name: Clean OpenStack SSH keys from Ansible comments
+    lineinfile:
+      path: "{{ item }}"
+      state: absent
+      regexp: '^#'
+    loop:
+      - /root/.ssh/openstack.pem
+      - /root/.ssh/openstack.pub
 
 - hosts: workstation
   become: yes
