@@ -2,8 +2,7 @@
 # tasks file for osp-facts
 - name: Fetch Instance Info
   os_server_info:
-   cloud: ospcloud
-   region_name: RegionOne
+   cloud: "{{ cloud }}"
    filters:
      vm_state: active
   register: result
