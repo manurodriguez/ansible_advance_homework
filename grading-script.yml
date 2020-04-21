@@ -12,19 +12,34 @@
   gather_facts: false
   tasks:
   - name: OpenStack servers
-    os_server_facts:
+    os_server_info:
       cloud: ospcloud
       server: 'frontend'
+      filters:
+        vm_state: active
     register: openstack_info
+    vars:
+      ansible_python_interpreter: /usr/bin/python3
 
-  - name: Curl website
-    command: curl "http://{{item.public_v4}}"
-    with_items:
-       - "{{ openstack_info.ansible_facts.openstack_servers }}"
+  - name: Save Frontend IP
+    set_fact:
+      frontendIP: "{{ openstack_info.openstack_servers | json_query(instancequery) }}"
+    vars:
+      instancequery: "[0].accessIPv4"
+
+  - name: Curl Frontend website
+    uri:
+      url: "http://{{ item }}"
+      return_content: yes
     register: webpage
+    loop:
+      - "{{ frontendIP }}"
+
+  - debug: var=webpage.results[0].content
+
   - name: Fail
     fail:
-    when: "'Ansible' not in webpage.results[0].stdout" 
+    when: "'Ansible' not in webpage.results[0].content" 
 
   
 - hosts: localhost
@@ -33,7 +48,9 @@
   - name: Curl website
     command: curl "http://frontend1.{{ ANSIBLE_ADVANCE_GUID }}.example.opentlc.com"
     register: webpage
+
   - debug: var=webpage.stdout
+
   - name: Fail
     fail:
     when: "'Ansible' not in webpage.stdout" 
