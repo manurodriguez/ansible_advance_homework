@@ -1,4 +1,4 @@
-- hosts: tag_instance_filter_three_tier_app_{{ tag_filter_email | regex_replace('\.|\@|\-','_') }}
+- hosts: tag_instance_filter_three_tier_app_{{ email | regex_replace('\.|\@|\-','_') }}
   gather_facts: false
   tasks:
   - name: Check the instances status
